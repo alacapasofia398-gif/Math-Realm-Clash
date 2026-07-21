@@ -7,6 +7,7 @@ document.getElementById('page-title').textContent = GAME_TITLE;
 document.getElementById('game-title-header').textContent = GAME_TITLE.replace(/👑/g, '').trim();
 
 // --- 1. FIREBASE CONFIGURATION ---
+// --- 1. FIREBASE CONFIGURATION ---
 const firebaseConfig = {
   apiKey: "AIzaSyBq9SQSPCxmnbYLay2lOWESY96NVYWym8k",
   authDomain: "math-real-clash.firebaseapp.com",
@@ -17,6 +18,10 @@ const firebaseConfig = {
   appId: "1:325329128875:web:a753cb71f7ed8ef0f0d6ee",
   measurementId: "G-57LGMVFB0H"
 };
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
