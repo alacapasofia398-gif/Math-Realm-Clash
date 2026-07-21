@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="page-title">👑 Math Realm Clash 👑</title>
+  
+  <link rel="stylesheet" href="style.css">
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+</head>
+<body>
+
+  <div class="app-viewport">
+    
+    <header class="royal-header">
+      <div class="brand">
+        <h1 id="game-title-header">👑 Math Realm Clash</h1>
+        <span class="room-badge">Room: <strong id="display-room-code">----</strong></span>
+      </div>
+      <div class="timer-card">
+        <span class="timer-label">TIME REMAINING</span>
+        <span class="timer-value" id="display-timer">10:00</span>
+      </div>
+    </header>
+
+    <main class="game-layout">
+
+      <aside class="sidebar-panel">
+        
+        <section class="panel-box">
+          <h2 class="panel-title">🏆 Live Leaderboard</h2>
+          <div class="leaderboard-list" id="leaderboard-container">
+            </div>
+        </section>
+
+        <section class="panel-box avatar-studio">
+          <h2 class="panel-title">👸 Avatar Studio</h2>
+          
+          <div class="avatar-stage">
+            <svg class="avatar-svg" viewBox="0 0 200 220">
+              <path d="M 50,90 Q 30,170 60,200 Q 100,210 140,200 Q 170,170 150,90 Z" fill="#78350f" />
+              <path id="svg-dress" d="M 70,140 L 130,140 L 155,210 Q 100,220 45,210 Z" fill="#ec4899" />
+              <rect x="90" y="115" width="20" height="30" fill="#fde047" rx="5" />
+              <circle cx="100" cy="85" r="40" fill="#fed7aa" />
+              <circle cx="85" cy="80" r="4" fill="#334155" />
+              <circle cx="115" cy="80" r="4" fill="#334155" />
+              <path d="M 92,98 Q 100,108 108,98" stroke="#e11d48" stroke-width="3" fill="none" stroke-linecap="round" />
+              <path id="svg-tiara" class="hidden" d="M 75,52 Q 100,42 125,52 L 120,45 L 100,35 L 80,45 Z" fill="#facc15" stroke="#eab308" stroke-width="1.5" />
+              <g id="svg-crown" class="hidden">
+                <path d="M 70,48 L 75,25 L 88,40 L 100,20 L 112,40 L 125,25 L 130,48 Z" fill="#fbbf24" stroke="#d97706" stroke-width="2" />
+                <circle cx="100" cy="20" r="4" fill="#3b82f6" />
+              </g>
+              <g id="svg-earrings" class="hidden">
+                <circle cx="58" cy="92" r="4" fill="#38bdf8" />
+                <circle cx="142" cy="92" r="4" fill="#38bdf8" />
+              </g>
+              <path id="svg-necklace" class="hidden" d="M 82,125 Q 100,140 118,125" stroke="#facc15" stroke-width="3" fill="none" stroke-dasharray="2,2" />
+              <g id="svg-wand" class="hidden">
+                <line x1="145" y1="180" x2="175" y2="120" stroke="#93c5fd" stroke-width="4" stroke-linecap="round" />
+                <polygon points="175,110 178,118 186,118 180,123 182,131 175,126 168,131 170,123 164,118 172,118" fill="#facc15" />
+              </g>
+            </svg>
+          </div>
+
+          <div class="wardrobe-grid" id="wardrobe-grid">
+            <button class="acc-btn active" data-acc="crown">👑 Crown</button>
+            <button class="acc-btn" data-acc="tiara">👸 Tiara</button>
+            <button class="acc-btn" data-acc="necklace">📿 Necklace</button>
+            <button class="acc-btn" data-acc="earrings">💎 Earrings</button>
+            <button class="acc-btn" data-acc="wand">🪄 Wand</button>
+          </div>
+        </section>
+
+      </aside>
+
+      <section class="arena-panel">
+        
+        <div class="announcement-banner" id="announcement-banner">
+          Waiting for players to join...
+        </div>
+
+        <div class="question-card">
+          <span class="question-subtitle">Solve to Claim the Point!</span>
+          <div class="question-text" id="question-text">? × ?</div>
+        </div>
+
+        <form class="answer-form" id="answer-form">
+          <input type="number" id="answer-input" placeholder="Type answer..." required autocomplete="off">
+          <button type="submit" class="btn btn-primary">Submit Answer 🚀</button>
+        </form>
+
+        <div class="achievements-bar">
+          <span class="achievements-title">Achievements</span>
+          <div class="badge-row" id="achievements-row">
+            <span class="ach-badge locked" id="ach-1" title="First Correct Answer">🎯 First Hit</span>
+            <span class="ach-badge locked" id="ach-2" title="3 Answers in a Row">⚡ Speed Streak</span>
+            <span class="ach-badge locked" id="ach-3" title="Earn 50 Points">⭐ 50 Club</span>
+            <span class="ach-badge locked" id="ach-4" title="Reach Skilled Rank">👑 Skilled</span>
+          </div>
+        </div>
+
+      </section>
+
+    </main>
+
+    <div class="overlay-screen" id="lobby-overlay">
+      <div class="royal-modal">
+        <div class="modal-icon">🏰</div>
+        <h2 id="lobby-title">Join the Realm</h2>
+        <p class="modal-desc">Play real-time multiplication clash with up to 5 players!</p>
+        
+        <form id="lobby-form" class="modal-form">
+          <div class="input-group">
+            <label for="player-name">Your Player Name</label>
+            <input type="text" id="player-name" placeholder="e.g. Princess Sofia" required maxlength="14">
+          </div>
+          <div class="input-group">
+            <label for="room-code">Room Code (2-5 Players)</label>
+            <input type="text" id="room-code" placeholder="e.g. REALM" required maxlength="6">
+          </div>
+          <button type="submit" class="btn btn-primary btn-large">Enter Realm ⚔️</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="overlay-screen hidden" id="event-overlay">
+      <div class="royal-modal pop-in">
+        <div class="modal-icon" id="event-icon">🎉</div>
+        <h2 id="event-title">EVENT UNLOCKED!</h2>
+        <p class="modal-desc" id="event-desc">You unlocked a new rank!</p>
+        <button class="btn btn-primary" id="event-close-btn">Claim Reward ✨</button>
+      </div>
+    </div>
+
+    <div class="overlay-screen hidden" id="results-overlay">
+      <div class="royal-modal large-modal">
+        <div class="modal-icon">🏆</div>
+        <h2>Coronation - Game Results</h2>
+        <p class="modal-desc">The 10-minute battle has concluded!</p>
+
+        <div class="podium-container" id="podium-container">
+          </div>
+
+        <button class="btn btn-primary btn-large" onclick="location.reload()">Play Again 🔄</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
